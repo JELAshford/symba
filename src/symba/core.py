@@ -29,24 +29,15 @@ def gather_replication_candidate(state: np.ndarray) -> list[set]:
 
     """
     (num_states,) = state.shape
-    # Create a set of candidates for each position
     candidates = [set() for _ in range(num_states)]
     for pos, current_val in enumerate(state):
-        # Store all offsets already checked
-        offsets_checked = {current_val}
-        offset_to_check = current_val
-        while offset_to_check != 0:
-            # Get target position and it's value
-            target_position = (pos + offset_to_check) % num_states
-            target_value = state[target_position]
-            # Add original value as a candidate for this position
+        values_checked = {0}
+        value_to_check = current_val
+        while value_to_check not in values_checked:
+            values_checked.add(value_to_check)
+            target_position = (pos + value_to_check) % num_states
             candidates[target_position].add(current_val)
-            # Decide whether to continue searching
-            if target_value not in offsets_checked:
-                offsets_checked.add(target_value)
-                offset_to_check = target_value
-            else:
-                offset_to_check = 0
+            value_to_check = state[target_position]
     return candidates
 
 
