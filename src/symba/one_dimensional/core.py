@@ -1,4 +1,7 @@
+import matplotlib.pylab as plt
+from pathlib import Path
 import numpy as np
+import git
 
 
 def gather_replication_candidate(state: np.ndarray) -> list[set]:
@@ -60,7 +63,7 @@ def norm_zero(
     new_state:
         New 1D state after resolving replication behaviour
     """
-    return np.array([list(vals)[0] if len(vals) == 1 else 0 for vals in candidates])
+    return np.array([vals.pop() if len(vals) == 1 else 0 for vals in candidates])
 
 
 def norm_A(
@@ -185,3 +188,40 @@ def norm_D(
             else:
                 continue
     return new_state
+
+
+if __name__ == "__main__":
+    SIZE = 512
+    TIMESTEPS = 128
+    MAX_VAL = 2
+    SEED = 1701
+
+    # Get save path relative to project root
+    project_root = Path(git.Repo(".", search_parent_directories=True).working_dir)
+    SAVE_DIR = project_root / "out/one_dimensional"
+    SAVE_DIR.mkdir(exist_ok=True, parents=True)
+
+    # Basic baricelli copying
+    rng = np.random.default_rng(seed=SEED)
+    grid = np.zeros((TIMESTEPS, SIZE)).astype(int)
+
+    # Initialise with sparse random
+    grid[0, :] = rng.integers(-MAX_VAL, MAX_VAL + 1, size=(SIZE))
+    grid[0, rng.choice(np.arange(SIZE), size=int(SIZE * (4 / 5)), replace=False)] = 0
+
+    # Iteratively apply the replication updates/mutation norms
+    for step in range(1, TIMESTEPS):
+        candidates = gather_replication_candidate(grid[step - 1, :])
+        grid[step, :] = norm_zero(grid[step - 1, :], candidates)
+
+    # View the final state!
+    fig, ax = plt.subplots(1, 1)
+    ax.imshow(grid, aspect="auto", interpolation="none", cmap="bwr")
+    plt.axis("off")
+    plt.savefig(
+        f"{SAVE_DIR}/one_dimensional.png",
+        bbox_inches="tight",
+        transparent=True,
+        dpi=300,
+    )
+    plt.close()
