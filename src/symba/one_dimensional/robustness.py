@@ -1,4 +1,4 @@
-"""Examples of running norm zero, currently Figure 10 in the paper"""
+"""Test the robustness of the organism by colliding it with a number. Figure 15"""
 
 from symba.one_dimensional.core import gather_replication_candidate, norm_zero
 import matplotlib.pylab as plt
@@ -8,24 +8,27 @@ import git
 
 
 # Generate examples with different random seeds
-SIZE = 512
+SIZE = 500
 TIMESTEPS = 128
 MAX_VAL = 5
-SEEDS = (1701, 1298, 124710, 10941, 127912, 987)
+SEED = 1701
 
 # Get save path relative to project root
 project_root = Path(git.Repo(".", search_parent_directories=True).working_dir)
 SAVE_DIR = project_root / "out/one_dimensional"
 SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
-fig, axs = plt.subplots(2, len(SEEDS) // 2)
-for seed, ax in zip(SEEDS, axs.flatten()):
-    rng = np.random.default_rng(seed=seed)
+# Generate random attackers
+rng = np.random.default_rng(seed=SEED)
+attackers = ((100, 2), (100, 5), (100, 10), (400, -1), (400, -3), (400, -6))
+
+fig, axs = plt.subplots(2, len(attackers) // 2)
+for (position, value), ax in zip(attackers, axs.flatten()):
     grid = np.zeros((TIMESTEPS, SIZE)).astype(int)
 
-    # Initialise with sparse random
-    grid[0, :] = rng.integers(-MAX_VAL, MAX_VAL + 1, size=(SIZE))
-    grid[0, rng.choice(np.arange(SIZE), size=int(SIZE * (4 / 5)), replace=False)] = 0
+    # Initialise with organism and attacker
+    grid[0, 240:260] = [0, 0, 5, 0, 0, 0, 5, 0, 1, -3, 1, -3, 0, 0, 0, 0, 0, 0, 0, 0]
+    grid[0, position] = value
 
     # Iteratively apply the replication updates/mutation norms
     for step in range(1, TIMESTEPS):
@@ -45,7 +48,7 @@ for seed, ax in zip(SEEDS, axs.flatten()):
 
 plt.tight_layout()
 plt.savefig(
-    f"{SAVE_DIR}/norm_zero_example.png",
+    f"{SAVE_DIR}/robustness.png",
     bbox_inches="tight",
     transparent=True,
     dpi=300,
