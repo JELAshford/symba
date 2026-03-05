@@ -1,6 +1,6 @@
 """2d Barricelli"""
 
-from matplotlib.animation import ArtistAnimation, FuncAnimation
+from matplotlib.animation import FuncAnimation
 import matplotlib.pylab as plt
 from itertools import product
 from pathlib import Path
