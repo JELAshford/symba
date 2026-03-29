@@ -1,6 +1,6 @@
 """Example of measuremnts/metrics we can calculate for a running system. Figure 13+14."""
 
-from symba.one_dimensional.core import gather_replication_candidate, norm_zero
+from symba.one_dimensional.core import gather_replication_candidate, norm_zero, norm_A
 from scipy.spatial.distance import pdist, squareform
 from pyinform.utils import coalesce_series
 from pyinform.shannon import mutual_info
@@ -83,7 +83,7 @@ SAVE_DIR = project_root / "out/one_dimensional"
 SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
 
-SIZE = 64
+SIZE = 128
 TIMESTEPS = 128
 MAX_VAL = 2
 SEED = 1919264
@@ -97,9 +97,15 @@ grid[0, :] = rng.integers(-MAX_VAL, MAX_VAL + 1, size=(SIZE))
 grid[0, rng.choice(np.arange(SIZE), size=int(SIZE * (4 / 5)), replace=False)] = 0
 
 # Iteratively apply the replication updates/mutation norms
+half_width = SIZE // 2
 for step in range(1, TIMESTEPS):
     candidates = gather_replication_candidate(grid[step - 1, :])
-    grid[step, :] = norm_zero(grid[step - 1, :], candidates)
+    grid[step, :half_width] = norm_zero(
+        grid[step - 1, :half_width], candidates[:half_width]
+    )
+    grid[step, half_width:] = norm_A(
+        grid[step - 1, half_width:], candidates[half_width:]
+    )
 
 # Calcualte mutual info
 mutual_info_comparison = squareform(pdist(grid, metric=calc_mutual_info))
