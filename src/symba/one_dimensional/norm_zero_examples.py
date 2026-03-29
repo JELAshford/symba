@@ -1,11 +1,11 @@
 """Examples of running norm zero, currently Figure 10 in the paper"""
 
-from symba.one_dimensional.core import gather_replication_candidate, norm_zero
-import matplotlib.pylab as plt
 from pathlib import Path
-import numpy as np
-import git
 
+import git
+import matplotlib.pylab as plt
+import numpy as np
+from symba.one_dimensional.core import gather_replication_candidate, norm_zero
 
 # Generate examples with different random seeds
 SIZE = 512

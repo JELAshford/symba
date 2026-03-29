@@ -1,9 +1,12 @@
 """Make a version of the simulation that can run live in a web browser"""
 
-from core import gather_replication_candidate, norm_zero
-from drawerer import Simulation, DisplayApp
+from pathlib import Path
+
 import matplotlib.pylab as plt
 import numpy as np
+
+from symba.one_dimensional.core import gather_replication_candidate, norm_zero
+from symba.one_dimensional.drawerer import DisplayApp, Simulation
 
 
 class OneDimBarricelli(Simulation):
@@ -53,4 +56,4 @@ class OneDimBarricelli(Simulation):
 
 
 if __name__ == "__main__":
-    DisplayApp(OneDimBarricelli(), site_path="./test", target_fps=60).run()
+    DisplayApp(OneDimBarricelli(), site_path=Path("./test"), target_fps=60).run()

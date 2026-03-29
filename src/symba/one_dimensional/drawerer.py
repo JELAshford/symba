@@ -1,13 +1,15 @@
 """Send numpy arrays from a "Simulation" to local webpage for visualisation"""
 
-from flask import Flask, render_template, Response
-from tempfile import TemporaryDirectory
-from pathlib import Path
-from io import BytesIO
-from PIL import Image
-import numpy as np
 import shutil
 import time
+from io import BytesIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Generator
+
+import numpy as np
+from flask import Flask, Response, render_template
+from PIL import Image
 
 
 class Simulation:
@@ -15,11 +17,14 @@ class Simulation:
         self.img_buffer = BytesIO()
         self.frame_index = 0
 
-    def step(self) -> np.ndarray:
+    def step(self) -> Generator[np.ndarray]:
         raise NotImplementedError()
 
     def emit_buffer(
-        self, target_fps: int = 60, img_format: str = "PNG", save_dir: Path = None
+        self,
+        target_fps: int = 60,
+        img_format: str = "PNG",
+        save_dir: Path | None = None,
     ):
         # Clean up previous image outputs
         if save_dir:
@@ -53,16 +58,18 @@ class DisplayApp:
     def __init__(
         self,
         simulation_instance: Simulation,
-        site_path: Path = TemporaryDirectory(),
+        site_path: Path | TemporaryDirectory = TemporaryDirectory(),
         host: str = "0.0.0.0",
         port: int = 8080,
         debug: bool = True,
         target_fps: int = 60,
-        save_dir: Path = None,
+        save_dir: Path | None = None,
     ):
         self.simulation_instance = simulation_instance
-        self.app_params = dict(host=host, port=port, debug=debug)
-        self.site_path = Path(site_path)
+        self.host = host
+        self.port = port
+        self.debug = debug
+        self.site_path = Path(str(site_path))
         self.app = Flask(
             __name__,
             template_folder=self.site_path.absolute(),
@@ -110,7 +117,7 @@ body {
     <title>Array Display</title>
     <link
       rel="stylesheet"
-      href="{self.site_path / 'style.css'}"
+      href="{self.site_path / "style.css"}"
     />
   </head>
   <body>
@@ -140,4 +147,4 @@ body {
     def run(self):
         self.setup_site()
         self.setup_routes()
-        self.app.run(**self.app_params)
+        self.app.run(host=self.host, port=self.port, debug=self.debug)

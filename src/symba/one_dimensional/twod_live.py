@@ -1,10 +1,10 @@
 """Make a version of the simulation that can run live in a web browser"""
 
-from symba.two_dimensional.core import gather_replication_candidate, norm_zero
-from drawerer import Simulation, DisplayApp
-import matplotlib.pylab as plt
-from einops import repeat
+from pathlib import Path
+
 import numpy as np
+from symba.one_dimensional.drawerer import DisplayApp, Simulation
+from symba.two_dimensional.core import gather_replication_candidate, norm_zero
 
 
 class TwoDimBarricelli(Simulation):
@@ -41,4 +41,4 @@ class TwoDimBarricelli(Simulation):
 
 
 if __name__ == "__main__":
-    DisplayApp(TwoDimBarricelli(), site_path="./test", target_fps=30).run()
+    DisplayApp(TwoDimBarricelli(), site_path=Path("./test"), target_fps=30).run()
