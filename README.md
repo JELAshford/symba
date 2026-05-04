@@ -1,6 +1,6 @@
 # SymBa (**Sym**biogenetic **Ba**rricelli)
 
-![The 2D Barricelli system in action!](rsc/two_dimensional.mp4)
+![The 2D Barricelli system in action!](./rsc/two_dimensional.mp4)
 
 Experiments with some of the systems described by Niels Barricelli, with a focus on the emergent symbiogenetic behaviour.
 
