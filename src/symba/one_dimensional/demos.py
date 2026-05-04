@@ -98,9 +98,3 @@ for step in range(1, timesteps):
     candidates = gather_replication_candidate(grid[step - 1, :])
     grid[step, :] = norm_zero(grid[step - 1, :], candidates)
 save_state(grid, Path(f"{SAVE_DIR}/fig3.png"))
-breakpoint()
-
-with open("file", "w") as f:
-    for row in grid:
-        line = " ".join(map(lambda s: str(s).zfill(2), row))
-        f.write(line + "\n")
