@@ -1,6 +1,6 @@
-# Symba (**Sym**biogenetic **ba**rricelli)
+# SymBa (**Sym**biogenetic **Ba**rricelli)
 
-Experiments with some of the systems described by Niels Barricelli, with a focus on the emergeny symbiogenetic behaviour.
+Experiments with some of the systems described by Niels Barricelli, with a focus on the emergent symbiogenetic behaviour.
 
 This repo includes implementations of the 1- and 2-D variants of Barricelli's automata, and an implentation of a DNA-like system that follows similar principles.
 

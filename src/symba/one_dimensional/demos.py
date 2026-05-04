@@ -83,3 +83,24 @@ for step in range(1, timesteps):
     grid[:, :20] = 0
     grid[:, -20:] = 0
 save_state(grid, Path(f"{SAVE_DIR}/fig5.png"))
+
+
+# Figure 3: emergent crossover
+timesteps = 20
+edge = 200
+grid = np.zeros((timesteps, 100 + (edge * 2))).astype(int)
+left_parent = [5, -11, 1, -3] * 6
+right_parent = [9, -11, 1, -7] * 7
+grid[0, :] = (
+    [0] * (10 + edge) + left_parent + [0] * 16 + right_parent + [0] * (22 + edge)
+)
+for step in range(1, timesteps):
+    candidates = gather_replication_candidate(grid[step - 1, :])
+    grid[step, :] = norm_zero(grid[step - 1, :], candidates)
+save_state(grid, Path(f"{SAVE_DIR}/fig3.png"))
+breakpoint()
+
+with open("file", "w") as f:
+    for row in grid:
+        line = " ".join(map(lambda s: str(s).zfill(2), row))
+        f.write(line + "\n")
